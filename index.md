@@ -4,6 +4,8 @@ One of the best practices with IaC is to make sure your secrets never wind up in
 
 For this solution, you will need a GPG key, the password manager from http://passwordstore.org. You will modify your `.zshrc` to invoke new environment variables and modify your .tf files to use those variables.
 
+some new text
+
 If you need a gpg key run this command and follow the prompts:
 ```
 gpg --full-generate-key
