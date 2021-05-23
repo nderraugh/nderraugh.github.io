@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-05-23T18:59:12-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">nderraugh.github.io</title><subtitle>I need somewhere to write.</subtitle><entry><title type="html">Secrets at rest</title><link href="http://localhost:4000/terraform/security/2020/06/09/terraform-secrets.html" rel="alternate" type="text/html" title="Secrets at rest" /><published>2020-06-09T16:18:50-04:00</published><updated>2020-06-09T16:18:50-04:00</updated><id>http://localhost:4000/terraform/security/2020/06/09/terraform-secrets</id><content type="html" xml:base="http://localhost:4000/terraform/security/2020/06/09/terraform-secrets.html">&lt;p&gt;Terraform is a great tool for automating your infrastructure.  We have been using it recently to capture some OpenStack infrastructure as code (IaC).  I am reading through the 2nd edition of &lt;em&gt;Terraform: Up &amp;amp; Running&lt;/em&gt; by Yevgeniy Brikman.  I just finished reading chapter 3 which is about managing your Terraform state.  One of the sidebars was about secrets.&lt;/p&gt;
+
+&lt;p&gt;One of the best practices with IaC is to make sure your secrets never wind up in your source repositories.  Terraform has the ability to accept environment variables as parameters which would certainly make life easier if we put them in our shell startup script.  But how can we set up environment variables as Terraform parameters without storing our passwords in plain text in say &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.zshrc&lt;/code&gt; or in our shell history?  A solution proposed in chapter 3 is to use a tool like http://passwordstore.org to secure your secrets at rest.&lt;/p&gt;
+
+&lt;p&gt;For this solution, you will need a GPG key, the password manager from http://passwordstore.org. You will modify your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.zshrc&lt;/code&gt; to invoke new environment variables and modify your .tf files to use those variables.&lt;/p&gt;
+
+&lt;p&gt;If you need a gpg key run this command and follow the prompts:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gpg --full-generate-key
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Choose RSA + RSA, use key size 4096, set the key expiry and enter your details.&lt;/p&gt;
+
+&lt;p&gt;You will get some output that looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gpg: key 866F4C51D21B52CA marked as ultimately trusted
+gpg: directory '/Users/neilderraugh/.gnupg/openpgp-revocs.d' created
+gpg: revocation certificate stored as '/Users/neilderraugh/.gnupg/openpgp-revocs.d/9BCFAF34DC248F0C3BF998A03FC9BC700DD0A19A.rev'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next step install &lt;em&gt;pass: the standard unix password manager&lt;/em&gt;.  Note that you’ll need the key id (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;866F4C51D21B52CA&lt;/code&gt;)from the previous step.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew install pass
+
+pass init &quot;866F4C51D21B52CA&quot;
+
+pass insert openstack_password &quot;some password&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Add the Terraform environment variables you want to your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.zshrc&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;export TF_VAR_openstack_password=$(pass openstack_password)
+export TF_VAR_openstack_user_name=service_account_user
+export TF_VAR_openstack_auth_url=http://some_url:5000/v3
+export TF_VAR_openstack_tenant_id=some_id
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And then modify your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;var.tf&lt;/code&gt; to leverage those new environment variables including the secrets:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;variable &quot;openstack_user_name&quot; {
+  type=string
+}
+
+variable &quot;openstack_password&quot; {
+  type=string
+}
+
+variable &quot;openstack_auth_url&quot; {
+  type=string
+}
+
+variable &quot;openstack_tenant_id&quot; {
+  type=string
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.tf&lt;/code&gt; will look something like this&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;provider &quot;openstack&quot; {
+  user_name   = var.openstack_user_name
+  tenant_name = var.openstack_user_name
+  password    = var.openstack_password
+  auth_url    = var.openstack_auth_url
+  tenant_id   = var.openstack_tenant_id
+  region      = &quot;RegionOne&quot;
+}
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Safety first kids!&lt;/p&gt;</content><author><name></name></author><category term="terraform" /><category term="security" /><summary type="html">Terraform is a great tool for automating your infrastructure. We have been using it recently to capture some OpenStack infrastructure as code (IaC). I am reading through the 2nd edition of Terraform: Up &amp;amp; Running by Yevgeniy Brikman. I just finished reading chapter 3 which is about managing your Terraform state. One of the sidebars was about secrets.</summary></entry></feed>

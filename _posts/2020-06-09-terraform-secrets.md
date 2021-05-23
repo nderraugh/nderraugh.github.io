@@ -1,3 +1,9 @@
+---
+layout: post
+title:  "Secrets at rest"
+date:   2020-06-09 16:18:50 -0400
+categories: terraform security
+---
 Terraform is a great tool for automating your infrastructure.  We have been using it recently to capture some OpenStack infrastructure as code (IaC).  I am reading through the 2nd edition of _Terraform: Up & Running_ by Yevgeniy Brikman.  I just finished reading chapter 3 which is about managing your Terraform state.  One of the sidebars was about secrets.
 
 One of the best practices with IaC is to make sure your secrets never wind up in your source repositories.  Terraform has the ability to accept environment variables as parameters which would certainly make life easier if we put them in our shell startup script.  But how can we set up environment variables as Terraform parameters without storing our passwords in plain text in say `.zshrc` or in our shell history?  A solution proposed in chapter 3 is to use a tool like http://passwordstore.org to secure your secrets at rest.
