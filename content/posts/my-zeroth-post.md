@@ -1,10 +1,10 @@
 +++
 date = '2025-02-21T17:45:24-05:00'
-draft = true
-title = 'My Zeroth Post - Time for a Reboot'
+draft = false
+title = 'My Zeroth Post - A time for reboots'
 +++
 ## Hello
-Welcome!  My content will be about work, life and personal interests.  I consult on software development and related socio-technical issues.
+Welcome!  My content will be about work, life and personal interests.  In a professional capacity I consult on software development and related socio-technical issues, like DevOps, software architecture and business.
 
 In my personal life I am married, have kids, coach ringette.  I am trying to get fit, eat right, sleep better, and continue on my journey of personal discovery and betterment.
 

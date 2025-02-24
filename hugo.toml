@@ -5,4 +5,24 @@ theme = "hugo-theme-m10c"
 googleanalytics = "G-9YX4BXJ86J"
 
 [params]
-  description = "Learning to learn, stress, systems, code, life, bikes, skis, and ringette.  More than a little bit Feynman technique."
+  description = "Learning to learn, stress, systems, code, life, bikes, skis, and ringette.  More-than-a-little-bit Feynman technique."
+
+  [params.style]
+    darkestColor = "#242930"
+    darkColor = "#353b43"
+    lightColor = "#afbac4"
+    lightestColor = "#ffffff"
+    primaryColor = "#54aeff"
+
+  [[params.social]]
+    icon = "brand-github"
+    name = "GitHub"
+    url = "https://github.com/nderraugh"
+  [[params.social]]
+    icon = "brand-bluesky"
+    name = "Bluesky"
+    url = "https://bsky.app/profile/nderraugh.bsky.social"
+  [[params.social]]
+    icon = "brand-mastodon"
+    name = "Mastodon"
+    url = "https://mstdn.ca/@nderraugh"
