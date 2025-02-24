@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-ca">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <title>Terraform Secrets // Transparent Dogfood</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.144.2">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-9YX4BXJ86J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-9YX4BXJ86J');
+        }
+      </script>
+    
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Terraform Secrets">
+  <meta name="twitter:description" content="Terraform is a great tool for automating your infrastructure. We have been using it recently to capture some OpenStack infrastructure as code (IaC). I am reading through the 2nd edition of Terraform: Up &amp; Running by Yevgeniy Brikman. I just finished reading chapter 3 which is about managing your Terraform state. One of the sidebars was about secrets.
+One of the best practices with IaC is to make sure your secrets never wind up in your source repositories. Terraform has the ability to accept environment variables as parameters which would certainly make life easier if we put them in our shell startup script. But how can we set up environment variables as Terraform parameters without storing our passwords in plain text in say .zshrc or in our shell history? A solution proposed in chapter 3 is to use a tool like http://passwordstore.org to secure your secrets at rest.">
+
+    <meta property="og:url" content="http://localhost:1313/posts/terraform-secrets/">
+  <meta property="og:site_name" content="Transparent Dogfood">
+  <meta property="og:title" content="Terraform Secrets">
+  <meta property="og:description" content="Terraform is a great tool for automating your infrastructure. We have been using it recently to capture some OpenStack infrastructure as code (IaC). I am reading through the 2nd edition of Terraform: Up &amp; Running by Yevgeniy Brikman. I just finished reading chapter 3 which is about managing your Terraform state. One of the sidebars was about secrets.
+One of the best practices with IaC is to make sure your secrets never wind up in your source repositories. Terraform has the ability to accept environment variables as parameters which would certainly make life easier if we put them in our shell startup script. But how can we set up environment variables as Terraform parameters without storing our passwords in plain text in say .zshrc or in our shell history? A solution proposed in chapter 3 is to use a tool like http://passwordstore.org to secure your secrets at rest.">
+  <meta property="og:locale" content="en_ca">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-06-09T16:18:50-05:00">
+    <meta property="article:modified_time" content="2020-06-09T16:18:50-05:00">
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <span class="app-header-title">Transparent Dogfood</span>
+      <p>Learning to learn, stress, systems, code, life, bikes, skis, and ringette.  More than a little bit Feynman technique.</p>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Terraform Secrets</h1>
+      <div class="post-meta">
+        <div>
+          <svg class="icon icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Jun 9, 2020
+        </div>
+        <div>
+          <svg class="icon icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>clock</title><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          2 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<p>Terraform is a great tool for automating your infrastructure.  We have been using it recently to capture some OpenStack infrastructure as code (IaC).  I am reading through the 2nd edition of <em>Terraform: Up &amp; Running</em> by Yevgeniy Brikman.  I just finished reading chapter 3 which is about managing your Terraform state.  One of the sidebars was about secrets.</p>
+<p>One of the best practices with IaC is to make sure your secrets never wind up in your source repositories.  Terraform has the ability to accept environment variables as parameters which would certainly make life easier if we put them in our shell startup script.  But how can we set up environment variables as Terraform parameters without storing our passwords in plain text in say <code>.zshrc</code> or in our shell history?  A solution proposed in chapter 3 is to use a tool like <a href="http://passwordstore.org">http://passwordstore.org</a> to secure your secrets at rest.</p>
+<p>For this solution, you will need a GPG key, the password manager from <a href="http://passwordstore.org">http://passwordstore.org</a>. You will modify your <code>.zshrc</code> to invoke new environment variables and modify your .tf files to use those variables.</p>
+<p>If you need a gpg key run this command and follow the prompts:</p>
+<pre tabindex="0"><code>gpg --full-generate-key
+</code></pre><p>Choose RSA + RSA, use key size 4096, set the key expiry and enter your details.</p>
+<p>You will get some output that looks like this:</p>
+<pre tabindex="0"><code>gpg: key 866F4C51D21B52CA marked as ultimately trusted
+gpg: directory &#39;/Users/neilderraugh/.gnupg/openpgp-revocs.d&#39; created
+gpg: revocation certificate stored as &#39;/Users/neilderraugh/.gnupg/openpgp-revocs.d/9BCFAF34DC248F0C3BF998A03FC9BC700DD0A19A.rev&#39;
+</code></pre><p>Next step install <em>pass: the standard unix password manager</em>.  Note that you&rsquo;ll need the key id (<code>866F4C51D21B52CA</code>)from the previous step.</p>
+<pre tabindex="0"><code>brew install pass
+
+pass init &#34;866F4C51D21B52CA&#34;
+
+pass insert openstack_password &#34;some password&#34;
+</code></pre><p>Add the Terraform environment variables you want to your <code>.zshrc</code>:</p>
+<pre tabindex="0"><code>export TF_VAR_openstack_password=$(pass openstack_password)
+export TF_VAR_openstack_user_name=service_account_user
+export TF_VAR_openstack_auth_url=http://some_url:5000/v3
+export TF_VAR_openstack_tenant_id=some_id
+</code></pre><p>And then modify your <code>var.tf</code> to leverage those new environment variables including the secrets:</p>
+<pre tabindex="0"><code>variable &#34;openstack_user_name&#34; {
+  type=string
+}
+
+variable &#34;openstack_password&#34; {
+  type=string
+}
+
+variable &#34;openstack_auth_url&#34; {
+  type=string
+}
+
+variable &#34;openstack_tenant_id&#34; {
+  type=string
+}
+</code></pre><p>Your <code>main.tf</code> will look something like this</p>
+<pre tabindex="0"><code>provider &#34;openstack&#34; {
+  user_name   = var.openstack_user_name
+  tenant_name = var.openstack_user_name
+  password    = var.openstack_password
+  auth_url    = var.openstack_auth_url
+  tenant_id   = var.openstack_tenant_id
+  region      = &#34;RegionOne&#34;
+}
+...
+</code></pre><p>Safety first kids!</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

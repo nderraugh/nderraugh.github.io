@@ -1,0 +1,8 @@
+baseURL = 'https://transparentdogfood.dev/'
+languageCode = 'en-ca'
+title = 'Transparent Dogfood'
+theme = "hugo-theme-m10c"
+googleanalytics = "G-9YX4BXJ86J"
+
+[params]
+  description = "Learning to learn, stress, systems, code, life, bikes, skis, and ringette.  More than a little bit Feynman technique."
