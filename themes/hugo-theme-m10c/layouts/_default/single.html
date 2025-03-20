@@ -30,6 +30,15 @@
     </div>
     <div class="post-footer">
       {{ template "_internal/disqus.html" . }}
+
+      <script src="https://utteranc.es/client.js"
+        repo="nderraugh/nderraugh.github.io"
+        issue-term="url"
+        label="blog-comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+      </script>
     </div>
   </article>
 {{ end }}
