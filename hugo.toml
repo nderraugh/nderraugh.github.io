@@ -1,11 +1,11 @@
-baseURL = 'https://transparentdogfood.dev/'
+baseURL = 'https://correspondences.dev/'
 languageCode = 'en-ca'
-title = 'Transparent Dogfood'
+title = 'Correspondences'
 theme = "hugo-theme-m10c"
 googleanalytics = "G-9YX4BXJ86J"
 
 [params]
-  description = "Learning to learn, stress, systems, code, life, bikes, skis, and ringette.  More-than-a-little-bit Feynman technique."
+  description = "Learning to learn, finding purpose, taking on stress; bikes; systems, code, functional programming.  More-than-a-little-bit Feynman technique."
 
   [params.style]
     darkestColor = "#242930"
