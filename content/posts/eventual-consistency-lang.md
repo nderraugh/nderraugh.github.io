@@ -5,7 +5,7 @@ title = 'Eventually Consistent Language'
 +++
 # Eventual Consistency
 
-The notion of eventual consistency (EC) in computing is a helpful construct for dealing with a world that is by nature asynchronous.  Reasoning through EC scenarios lets us plan and build around these very real world computing problems.  Data arriving at different computer nodes out of order, or delayed require us to work through the logic of different logical cases to ensure that the nodes agree on the logically correct state... eventually.  We don't get any of this for free, it requires time and effort to design systems to leverage EC, but the payoff is that we wind up creating software that is more robust, and more deliberately addresses complicated real world problems.
+The notion of eventual consistency (EC) in computing is a helpful construct for dealing with a world that is by nature asynchronous.  Reasoning through EC scenarios lets us plan and build around these very real world computing problems.  Data arriving at different computer nodes out of order, or delayed, for example, require us to work through the logic of different physical scenarios to ensure that the nodes agree on the correct state of the data... eventually.  We don't get any of this for free, it requires time and effort to design systems to leverage EC, but the payoff is that we wind up creating software that is more robust, and more deliberately addresses complicated real world problems.
 
 # Software is Composed of Words
 
