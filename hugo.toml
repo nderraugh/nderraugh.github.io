@@ -5,7 +5,7 @@ theme = "hugo-theme-m10c"
 googleanalytics = "G-9YX4BXJ86J"
 
 [params]
-  description = "Learning to learn, finding purpose, taking on stress; bikes; systems, code, functional programming.  More-than-a-little-bit Feynman technique."
+  description = "Learning to learn, eustress; bikes; science, systems, code, functional programming.  Feynman techniquing."
 
   [params.style]
     darkestColor = "#242930"
